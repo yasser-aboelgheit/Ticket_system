@@ -1,0 +1,38 @@
+{% extends 'website/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="col-md-8">
+        <h2>Home</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+        {% if requests %}
+        <h2>old requests</h2>
+        {% endif %}
+        <!-- {% for request in requests %}
+        {{request.title}}
+        <br/>
+        {{request.issue}}
+        <br/>
+        {% endfor %} -->
+        <div class="requests">
+                {% for request in requests %}
+                    <div class="request">
+                        <h2><a href="{% url 'request_single' request.slug %}">{{request.title}}</a></h2>
+                        <br/>
+                        {{request.snippet}}
+                        <br/>
+                        {% if request.is_closed == True %}
+                        <p>This request is closed</p>
+                        {% else %}
+                        <p>Request needs work</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                </div>
+    </div>
+{% endblock %}

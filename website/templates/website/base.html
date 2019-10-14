@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .requests{
+                display:grid;
+                grid-template-columns:1fr 1fr 1fr;
+                grid-gap: 30px;
+                margin:10px 10px 0 10px;
+            }
+            
+            .request{
+                padding:10px;
+                border: 1px solid rgb(121, 136, 219);
+                position:relative;
+                color:rgb(0, 76, 255);
+                /* padding-bottom: 40px; */
+            }
+            </style>
+    </head>
+    <body>
+        <br>
+        <div class="container">
+            <nav class="navbar navbar-default">
+            <div class="container-fluid">
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Dummy Home</a>
+              </div>
+              <div id="navbar" class="navbar-collapse collapse">
+                <!-- User -->
+                {% if user.is_authenticated and not request.user.is_staff %} 
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'create-request' %}">Add Request</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">{{user}}</a></li>
+                    <li><a href="{% url 'logout' %}">Log out</a></li>
+                </ul>
+                <!-- Employee -->
+                {% elif request.user.is_staff and not request.user.is_superuser %}
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'employee-my-requests' %}">My Requests</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">{{user}}</a></li>
+                    <li><a href="{% url 'logout' %}">Log out</a></li>
+                </ul>
+                <!-- superuser -->
+                {% elif request.user.is_superuser %}
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'employee-my-requests' %}">ALL Requests</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">{{user}}</a></li>
+                    <li><a href="{% url 'logout' %}">Log out</a></li>
+                </ul>
+                <!-- Not logged-in user -->
+                {% else %}
+                <ul class="nav navbar-nav navbar-right">
+                  <li><a href="{% url 'login' %}">Login</a></li>
+                  <li><a href="{% url 'signup' %}">Register</a></li>
+                </ul>
+                {% endif %}
+              </div><!--/.nav-collapse -->
+            </div><!--/.container-fluid -->
+          </nav>
+        </div>
+        
+        {% block content %}
+            <h1>Base</h1>
+        {% endblock %}
+    </body>
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</html>

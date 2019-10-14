@@ -1,0 +1,23 @@
+{% extends 'website/base.html' %}
+{% block content %}
+
+<div class="container">
+    <h1>Assigned Issues</h1>
+    <br/>
+        <div class="requests">
+        {% for request in requests %}
+            <div class="request">
+                <h2><a href="{% if user.is_superuser %}{% url 'request_super_user_single' request.slug %}{% else %}{% url 'request_single' request.slug %}{% endif %}">{{request.title}}</a></h2>
+                <br/>
+                {{request.snippet}}
+                <br/>
+                {% if request.is_closed == True %}
+                <p>This request is closed</p>
+                {% else %}
+                <p>Request needs work</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+</div>
+{% endblock %}
