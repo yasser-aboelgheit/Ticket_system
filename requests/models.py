@@ -29,10 +29,10 @@ class Request(models.Model):
         return '%s owned by %s' % (self.title, self.owner)
 
     def save(self, *args, **kwargs):
-        if self.employee:
-            self.status="assigned"
-            if self.is_closed==True:
-                self.status="closed"
+        if self.is_closed==True:
+            self.status="closed"
+        elif self.employee:
+            self.status="assigned"  
         else:
             self.status='not-assigned'
         super().save(*args, **kwargs)
