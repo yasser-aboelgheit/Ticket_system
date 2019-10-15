@@ -5,10 +5,10 @@ from .forms import RequestForm,RequestEmployeeForm, RequestSuperUserForm
 from .models import Request
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from website.permissions import StaffUserRequired, SuperUserRequired
+from website.permissions import StaffUserRequired, SuperUserRequired, UserRequired
 
 
-class RequestView(CreateView):
+class RequestView(UserRequired, CreateView):
     template_name = 'requests/create-request.html'
     queryset = Request.objects.all()
     form_class=RequestForm
