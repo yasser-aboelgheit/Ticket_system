@@ -5,6 +5,7 @@ from .forms import RequestForm,RequestEmployeeForm, RequestSuperUserForm
 from .models import Request
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from website.permissions import StaffUserRequired, SuperUserRequired
 
 
 class RequestView(CreateView):
@@ -28,15 +29,25 @@ class RequestView(CreateView):
         context['requests'] = Request.objects.filter(owner=self.request.user)
         return context
 
-class EmployeeRequestsView(ListView):
+class EmployeeRequestsView(StaffUserRequired,ListView):
     model = Request
     template_name = 'requests/employee-my-requests.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.is_superuser == False:
-            context['requests'] = Request.objects.filter(employee=self.request.user)
-        else:
-            context['requests'] = Request.objects.all()
+        employee_requests = Request.objects.filter(employee=self.request.user)
+        context['requests'] = employee_requests.filter(is_closed=False)
+        context['closed_requests'] = employee_requests.filter(is_closed=True)
+        return context
+
+class ManagerRequestsView(SuperUserRequired,ListView):
+    model = Request
+    template_name = 'requests/manager-requests.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        requests = Request.objects.all()
+        context['notAssigned_requests'] = requests.filter(status="not-assigned")
+        context['assigned_requests'] = requests.filter(status="assigned")
+        context['closed_requests'] = requests.filter(status="closed")
         return context
 
 class RequestSingleView(UpdateView):
@@ -54,4 +65,4 @@ class ManagerSingleView(UpdateView):
     form_class=RequestSuperUserForm
 
     def get_success_url(self):
-        return reverse('employee-my-requests')
+        return reverse('manager-requests')
